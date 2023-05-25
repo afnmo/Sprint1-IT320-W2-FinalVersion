@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -17,7 +18,7 @@ import android.widget.Toast;
 public class login extends AppCompatActivity {
     EditText username, password;
     Button signin;
-    DBHelper DB;
+    DatabaseHelper DB;
     //hello
     TextView signUpRedirect;
 
@@ -38,7 +39,7 @@ public class login extends AppCompatActivity {
         username = findViewById(R.id.username1);
         password = findViewById(R.id.password1);
         signin = findViewById(R.id.btnsignin1);
-        DB = new DBHelper(this);
+        DB = new DatabaseHelper(this);
         signUpRedirect = findViewById(R.id.signUpRedirectText);
         signin.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -53,9 +54,12 @@ public class login extends AppCompatActivity {
                     Boolean check = isLogin(user,pass);
                     if (check){
                         Toast.makeText(login.this, "Sign in successfully", Toast.LENGTH_SHORT).show();
+//                        for retrieving the username of current user
+                        DB.saveUsername(user);
                         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
                         startActivity(intent);
+
 
                     } else {
                         Toast.makeText(login.this, "Invalid Credentials", Toast.LENGTH_SHORT).show();

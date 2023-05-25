@@ -1,6 +1,8 @@
 package com.example.navigationdrawer;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -61,33 +63,48 @@ class DeleteHolder extends RecyclerView.ViewHolder{
         rowImg = itemView.findViewById(R.id.item_image);
 
         itemView.findViewById(R.id.deleteButton).setOnClickListener(view -> {
-
-            int position = getAdapterPosition();
-//
-            DressModel dressBox = deletePageAdapter.dressModelList.remove(position);
-            int id = dressBox.getID();
-            DressModel dressModel = new DressModel(id);
-//            Toast.makeText(deletePageAdapter.context, "ID = " + id, Toast.LENGTH_SHORT).show();
-            //deletePageAdapter.temp_holder.rowId.getText().charAt(4)
-
-            boolean success = deletePageAdapter.databaseHelper.DeleteOne(dressModel);
-
-            if(success){
-//                deletePageAdapter.dressModelList.remove(position);
-                deletePageAdapter.notifyItemRemoved(position);
-                deletePageAdapter.notifyItemRangeChanged(position, deletePageAdapter.dressModelList.size());
-            }
-            else{
-                Toast.makeText(deletePageAdapter.context, "ID = " + id, Toast.LENGTH_SHORT).show();
-                //Toast.makeText(deletePageAdapter.context, "Failed to delete in database", Toast.LENGTH_SHORT).show();
-            }
-
+            showDeleteConfirmationDialog();
 
         });
     }
     public DeleteHolder linkAdapter(DeletePageAdapter adaptor){
         this.deletePageAdapter = adaptor;
         return this;
+    }
+
+    private void showDeleteConfirmationDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(deletePageAdapter.context);
+        builder.setMessage("Are you sure you want to delete this item?");
+        builder.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                // User clicked the Delete button
+                int position = getAdapterPosition();
+                DressModel dressBox = deletePageAdapter.dressModelList.remove(position);
+                int id1 = dressBox.getID();
+                DressModel dressModel = new DressModel(id1);
+//            Toast.makeText(deletePageAdapter.context, "ID = " + id, Toast.LENGTH_SHORT).show();
+                //deletePageAdapter.temp_holder.rowId.getText().charAt(4)
+
+                boolean success = deletePageAdapter.databaseHelper.DeleteOne(dressModel);
+
+                if(success){
+//                deletePageAdapter.dressModelList.remove(position);
+                    deletePageAdapter.notifyItemRemoved(position);
+                    deletePageAdapter.notifyItemRangeChanged(position, deletePageAdapter.dressModelList.size());
+                }
+                else{
+                    Toast.makeText(deletePageAdapter.context, "ID = " + id1, Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(deletePageAdapter.context, "Failed to delete in database", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                // User cancelled the dialog
+            }
+        });
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 
 

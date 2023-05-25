@@ -17,7 +17,7 @@ import android.widget.Toast;
         Button signup;
 
         TextView signInRedirect;
-        DBHelper db ;
+        DatabaseHelper db ;
 
         @Override
         protected void onCreate(Bundle savedInstanceState) {
@@ -29,7 +29,7 @@ import android.widget.Toast;
             confirmPPassword = findViewById(R.id.signup_confirm);
             emaill = findViewById(R.id.signup_email);
             signInRedirect = findViewById(R.id.loginRedirectText);
-            db = new DBHelper(this);
+            db = new DatabaseHelper(this);
             signup.setOnClickListener(new View.OnClickListener(){
                 @Override
                 public void onClick(View view) {

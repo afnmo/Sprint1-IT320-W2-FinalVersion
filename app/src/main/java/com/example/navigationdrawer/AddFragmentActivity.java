@@ -4,8 +4,12 @@ import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.VectorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -42,7 +46,11 @@ import java.util.List;
 public class AddFragmentActivity extends Fragment {
 
     EditText dressName;
-
+    EditText description;
+    EditText price;
+    EditText size;
+    EditText phoneNo;
+    EditText city;
     DatabaseHelper databaseHelper;
     ImageView dressPhoto;
 
@@ -64,16 +72,20 @@ public class AddFragmentActivity extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
 
-//        super.onCreate(savedInstanceState);
         View rootView = inflater.inflate(R.layout.fragment_add, container, false);
-//
-//        setContentView(R.layout.fragment_add);
+
         dressName = rootView.findViewById(R.id.dressName);
         dressPhoto = rootView.findViewById(R.id.image_view_dress);
         fab = rootView.findViewById(R.id.floating_action_button);
         databaseHelper = new DatabaseHelper(container.getContext());
         addButton = rootView.findViewById(R.id.addButton);
-//        DressListView = findViewById(R.id.list_view);
+
+        description = rootView.findViewById(R.id.description);
+        price = rootView.findViewById(R.id.price);
+        size = rootView.findViewById(R.id.size);
+        phoneNo = rootView.findViewById(R.id.phoneN);
+        city = rootView.findViewById(R.id.city);
+
 
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -83,64 +95,131 @@ public class AddFragmentActivity extends Fragment {
         });
 
 
+//        addButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                // Get the dress name and image from the EditText and ImageView
+//
+//                    Bitmap dressImage = ((BitmapDrawable) dressPhoto.getDrawable()).getBitmap();
+//                    // Create a new DressModel object with the name and image
+//                    DressModel dressModel = new DressModel(-1, dressName.getText().toString(), dressImage,
+//                            description.getText().toString(), Integer.parseInt(price.getText().toString()),
+//                            size.getText().toString(), phoneNo.getText().toString(), city.getText().toString());
+////                    (int ID, String name, Bitmap image, String description, int price, String size, String phoneNo, String city)
+//
+//                    // Add the DressModel to the database
+//                    boolean success = databaseHelper.addOne(dressModel);
+//
+//                    if(success){
+//
+//                        Toast.makeText(getActivity(), "Dress added successfully", Toast.LENGTH_SHORT).show();
+//                        getParentFragmentManager().beginTransaction().replace(R.id.fragment_container, new AddFragmentActivity()).commit();
+//
+//                    }else{
+//                        Toast.makeText(getActivity(), "Something went wrong", Toast.LENGTH_SHORT).show();
+//                    }
+//
+//
+//
+//            }
+//        });
+
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // Get the dress name and image from the EditText and ImageView
 
-//                Toast.makeText(getActivity(), "image: " + dressPhoto.getDrawable(), Toast.LENGTH_SHORT).show();
-//
-//                if(dressPhoto.getDrawable() != null){
-                    Bitmap dressImage = ((BitmapDrawable) dressPhoto.getDrawable()).getBitmap();
-                    // Create a new DressModel object with the name and image
-                    DressModel dressModel = new DressModel(-1, dressName.getText().toString(), dressImage);
-                    // Add the DressModel to the database
-                    boolean success = databaseHelper.addOne(dressModel);
+                // Get the dress name
+                String name = dressName.getText().toString().trim();
+                if (name.isEmpty()) {
+                    Toast.makeText(getActivity(), "Please enter the dress name", Toast.LENGTH_SHORT).show();
+                    return;
+                }
 
-                    if(success){
+                // Get the dress description
+                String dressDescription = description.getText().toString().trim();
+                if (dressDescription.isEmpty()) {
+                    Toast.makeText(getActivity(), "Please enter the dress description", Toast.LENGTH_SHORT).show();
+                    return;
+                }
 
-                        Toast.makeText(getActivity(), "Dress added successfully", Toast.LENGTH_SHORT).show();
-                        getParentFragmentManager().beginTransaction().replace(R.id.fragment_container, new AddFragmentActivity()).commit();
+                // Get the dress price
+                String dressPriceText = price.getText().toString().trim();
+                if (dressPriceText.isEmpty()) {
+                    Toast.makeText(getActivity(), "Please enter the dress price", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                int dressPrice = Integer.parseInt(dressPriceText);
 
-                    }else{
-                        Toast.makeText(getActivity(), "Something went wrong", Toast.LENGTH_SHORT).show();
+                // Get the dress size
+                String dressSize = size.getText().toString().trim();
+                if (dressSize.isEmpty()) {
+                    Toast.makeText(getActivity(), "Please enter the dress size", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+//                else if(dressSize.toLowerCase() != "s" || dressSize.toLowerCase() != "m" || dressSize.toLowerCase() != "l"
+//                || dressSize.toLowerCase() != "xs" || dressSize.toLowerCase() != "xl"){
+//                    Toast.makeText(getActivity(), "Please enter dress size in s/m/l...", Toast.LENGTH_SHORT).show();
+//                    return;
+//                }
+
+                // Get the dress phone number
+                String dressPhone = phoneNo.getText().toString().trim();
+                if (dressPhone.isEmpty()) {
+                    Toast.makeText(getActivity(), "Please enter a phone number", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                else if(dressPhone.length() != 10){
+                    Toast.makeText(getActivity(), "Enter 10 numbers", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+//                else if(dressPhone.substring(0,2) != "05"){
+//                    Toast.makeText(getActivity(), "Enter phoneNo in fromat 05xxxxxxxx", Toast.LENGTH_SHORT).show();
+//                    return;
+//                }
+
+                // Get the dress city
+                String dressCity = city.getText().toString().trim();
+                if (dressCity.isEmpty()) {
+                    Toast.makeText(getActivity(), "Please enter a city", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                Bitmap dressImage = null;
+                Drawable drawable = dressPhoto.getDrawable();
+
+                // Validate the dress image
+                if (drawable instanceof VectorDrawable) {
+                    Toast.makeText(getActivity(), "Please select a dress image", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                else {
+                    dressImage = ((BitmapDrawable) dressPhoto.getDrawable()).getBitmap();
+                    if (dressImage == null || dressImage.getWidth() == 0 || dressImage.getHeight() == 0) {
+                        Toast.makeText(getActivity(), "Please select a dress image", Toast.LENGTH_SHORT).show();
+                        return;
                     }
-//                }
-//                else {
-//                    Toast.makeText(getActivity(), "image not added", Toast.LENGTH_SHORT).show();
-//                }
+                }
 
+                DressModel dressModel = new DressModel(-1, name, dressImage, dressDescription, dressPrice, dressSize, dressPhone, dressCity);
 
+                // Add the DressModel to the database
+                boolean success = databaseHelper.addOne(dressModel);
+
+                if(success){
+                    Toast.makeText(getActivity(), "Dress added successfully", Toast.LENGTH_SHORT).show();
+                    getParentFragmentManager().beginTransaction().replace(R.id.fragment_container, new AddFragmentActivity()).commit();
+                } else {
+                    Toast.makeText(getActivity(), "Something went wrong", Toast.LENGTH_SHORT).show();
+                }
             }
         });
-
         return rootView;
     }
-
-//    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-//        if (item.getItemId() == R.id.item_done) {
-//            Toast.makeText(getActivity(), "done", Toast.LENGTH_SHORT).show();
-//            return true;
-//        }
-//        return super.onOptionsItemSelected(item);
-//    }
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
     }
-
-//    @Override
-//    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-//        inflater.inflate(R.menu.fome_menu, menu);
-//        super.onCreateOptionsMenu(menu, inflater);
-//    }
-
-
-//    private void ShowDressOnListView(DatabaseHelper dataBaseHelper) {
-//        DressrArrayAdapter = new DressAdaptor(AddFragmentActivity.this, android.R.layout.simple_list_item_1, dataBaseHelper.getAll());
-//        DressListView.setAdapter(DressrArrayAdapter);
-//    }
 
 
     void imageChooser() {
@@ -165,5 +244,6 @@ public class AddFragmentActivity extends Fragment {
         }
 
 }
+
 
 }

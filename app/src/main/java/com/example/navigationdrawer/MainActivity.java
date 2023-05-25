@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -31,12 +32,10 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
 
-//    MenuItem loginId;
 
     NavigationView navigationView;
     private DrawerLayout drawerLayout;
 
-    DBHelper dbHelper;
     Menu menu;
 
     @Override
@@ -112,6 +111,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 break;
             case R.id.nav_logout:
 //                Toast.makeText(this, "Logout!", Toast.LENGTH_SHORT).show();
+                SharedPreferences sharedPreferences = getSharedPreferences("my_app_preferences", MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.remove("current_username");
+                editor.apply();
                 Intent intent = new Intent(getApplicationContext(), login.class);
                 startActivity(intent);
                 Toast.makeText(this, "Loged out successfully", Toast.LENGTH_SHORT).show();
