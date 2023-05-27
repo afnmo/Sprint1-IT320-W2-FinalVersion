@@ -18,13 +18,16 @@ import java.util.List;
 public class DatabaseHelper extends SQLiteOpenHelper {
 
 //    database name
-    public static final String DBNAME = "bridellaDB.db";
+    public static final String DBNAME = "bridellaDB3.db";
 
 //    table 1
     public static final String ALL_USERS_TABLE = "allUsers";
 
 //    table 2
     public static final String DRESS_TABLE = "DRESS_TABLE";
+
+//    table 3
+    public static final String RENT_TABLE = "rent";
 
 
 //    table 1 columns
@@ -42,6 +45,17 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String COLUMN_SIZE = "size";
     public static final String COLUMN_PHONE = "phoneNo";
     public static final String COLUMN_CITY = "city";
+
+//    table 3 columns
+
+    public static final String COLUMN_RENT_ID = "rentID";
+    public static final String COLUMN_DAYS = "days";
+    public static final String COLUMN_OCCASION_DATE = "occasionDate";
+    public static final String COLUMN_PICKUP_DATE = "pickupDate";
+    public static final String COLUMN_RENT_NAME = "name";
+//    public static final String COLUMN_PHONE = "phoneNo";
+//    public static final String COLUMN_USERNAME_FK = "userName";
+    public static final String COLUMN_ITEM_ID_FK = "itemID";
 
 
 //    create table 1 statement:
@@ -66,7 +80,21 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         + ")";
 
 
-//    List<DressModel> dressModelList = new ArrayList<>();
+//    create table 3 statement:
+    private static final String CREATE_TABLE_RENT_STATEMENT = "CREATE TABLE " + RENT_TABLE + "("
+        + COLUMN_RENT_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+        + COLUMN_DAYS + " INT, "
+        + COLUMN_OCCASION_DATE + " DATE, "
+        + COLUMN_PICKUP_DATE + " DATE, "
+        + COLUMN_RENT_NAME + " TEXT, "
+        + COLUMN_PHONE + " TEXT, "
+        + COLUMN_ITEM_ID_FK + " TEXT, "
+        + COLUMN_USERNAME_FK + " TEXT NOT NULL, "
+        + "FOREIGN KEY (" + COLUMN_USERNAME_FK + ") REFERENCES " + ALL_USERS_TABLE + "(" + COLUMN_USERNAME + "), "
+        + "FOREIGN KEY (" + COLUMN_ITEM_ID_FK + ") REFERENCES " + DRESS_TABLE + "(" + COLUMN_ID + ")"
+        + ")";
+
+
     private SharedPreferences sharedPreferences;
 
     public DatabaseHelper(@Nullable Context context) {
@@ -85,6 +113,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         // Create table 2
         db.execSQL(CREATE_TABLE_DRESS_STATEMENT);
+
+        db.execSQL(CREATE_TABLE_RENT_STATEMENT);
     }
 
 
@@ -146,11 +176,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 int dressId = cursor.getInt(0);
                 String dressName = cursor.getString(1);
                 byte[] imageByteArray = cursor.getBlob(2);
-
                 // Convert byte array to bitmap for displaying
                 Bitmap imageBitmap = BitmapFactory.decodeByteArray(imageByteArray, 0, imageByteArray.length);
 
-                DressModel dress = new DressModel(dressId, dressName, imageBitmap);
+                String description = cursor.getString(3);
+                int price = cursor.getInt(4);
+                String size = cursor.getString(5);
+                String phone = cursor.getString(6);
+                String city = cursor.getString(7);
+
+                DressModel dress = new DressModel(dressId, dressName, imageBitmap, description, price, size, phone, city);
                 dressList.add(dress);
             } while(cursor.moveToNext());
         }
@@ -212,18 +247,40 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
 
-//    public boolean DeleteOne(DressModel cModel){
-//        SQLiteDatabase db = this.getWritableDatabase();
-//        String queryString= "Delete From " + DRESS_TABLE + " WHERE " + COLUMN_ID + " = " + cModel.getID() ;
-//        Cursor cursor = db.rawQuery(queryString, null);
-//        if(cursor.moveToFirst()){
-//            return true;
-//        } else{
-//            // nothing happens. no one is added.
-//            return false;
-//        }
-//        //close
-//    }
+//    private static final String CREATE_TABLE_RENT_STATEMENT = "CREATE TABLE " + RENT_TABLE + "("
+//        + COLUMN_RENT_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+//        + COLUMN_DAYS + " INT, "
+//        + COLUMN_OCCASION_DATE + " DATE, "
+//        + COLUMN_PICKUP_DATE + " DATE, "
+//        + COLUMN_RENT_NAME + " TEXT, "
+//        + COLUMN_PHONE + " TEXT, "
+//        + COLUMN_ITEM_ID_FK + " TEXT, "
+//        + COLUMN_USERNAME_FK + " TEXT NOT NULL, "
+//        + "FOREIGN KEY (" + COLUMN_USERNAME_FK + ") REFERENCES " + ALL_USERS_TABLE + "(" + COLUMN_USERNAME + "), "
+//        + "FOREIGN KEY (" + COLUMN_ITEM_ID_FK + ") REFERENCES " + DRESS_TABLE + "(" + COLUMN_ID + ")"
+//        + ")";
+
+    public boolean addRentedItem(RentedItems rentedItems, int rentedItemID){
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(COLUMN_DAYS, rentedItems.getDays());
+        contentValues.put(COLUMN_OCCASION_DATE, rentedItems.getOccDate());
+        contentValues.put(COLUMN_PICKUP_DATE, rentedItems.getPickDate());
+        contentValues.put(COLUMN_RENT_NAME, rentedItems.getName());
+        contentValues.put(COLUMN_PHONE, rentedItems.getPhone());
+        contentValues.put(COLUMN_ITEM_ID_FK, rentedItemID);
+        contentValues.put(COLUMN_USERNAME_FK, getUsername());
+
+
+        long insert = db.insert(RENT_TABLE, null, contentValues);
+
+        if(insert == -1){
+            return false;
+        } else {
+            return true;
+        }
+    }
+
 
 
 

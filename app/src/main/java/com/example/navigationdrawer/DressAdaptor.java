@@ -22,34 +22,50 @@ import java.util.BitSet;
 import java.util.List;
 
 
-public class DressAdaptor extends RecyclerView.Adapter<DressAdaptor.ViewHolder> {
+public class DressAdaptor extends RecyclerView.Adapter<DressAdaptor.ViewHolder>{
 
+    private final RecyclerViewInterface recyclerViewInterface;
     Context context;
     List<DressModel> dressModelList;
     RecyclerView rvPrograms;
     final View.OnClickListener onClickListener = new MyOnClickListener();
+
+
+
     public static class ViewHolder extends RecyclerView.ViewHolder{
-
-
 
         TextView rowId;
         TextView rowName;
         ImageView rowImg;
-        public ViewHolder(@NonNull View itemView) {
+        public ViewHolder(@NonNull View itemView, RecyclerViewInterface recyclerViewInterface) {
             super(itemView);
             rowId = itemView.findViewById(R.id.item_id);
             rowName = itemView.findViewById(R.id.item_name);
             rowImg = itemView.findViewById(R.id.item_image);
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (recyclerViewInterface != null){
+                        int pos = getAdapterPosition();
+
+                        if(pos != RecyclerView.NO_POSITION){
+                            recyclerViewInterface.onItemClick(pos);
+                        }
+                    }
+                }
+            });
         }
 
 
 
     }
 
-    public DressAdaptor(Context context, List<DressModel> dressModelList, RecyclerView rvPrograms){
+    public DressAdaptor(Context context, List<DressModel> dressModelList, RecyclerView rvPrograms, RecyclerViewInterface recyclerViewInterface){
         this.context = context;
         this.dressModelList = dressModelList;
         this.rvPrograms = rvPrograms;
+        this.recyclerViewInterface = recyclerViewInterface;
     }
     @NonNull
     @Override
@@ -57,7 +73,7 @@ public class DressAdaptor extends RecyclerView.Adapter<DressAdaptor.ViewHolder> 
         LayoutInflater inflater = LayoutInflater.from(context);
         View view = inflater.inflate(R.layout.temp, parent, false);
         view.setOnClickListener(onClickListener);
-        ViewHolder viewHolder = new ViewHolder(view);
+        ViewHolder viewHolder = new ViewHolder(view, recyclerViewInterface);
         return viewHolder;
     }
 

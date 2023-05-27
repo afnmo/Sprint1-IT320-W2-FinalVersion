@@ -95,35 +95,6 @@ public class AddFragmentActivity extends Fragment {
         });
 
 
-//        addButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                // Get the dress name and image from the EditText and ImageView
-//
-//                    Bitmap dressImage = ((BitmapDrawable) dressPhoto.getDrawable()).getBitmap();
-//                    // Create a new DressModel object with the name and image
-//                    DressModel dressModel = new DressModel(-1, dressName.getText().toString(), dressImage,
-//                            description.getText().toString(), Integer.parseInt(price.getText().toString()),
-//                            size.getText().toString(), phoneNo.getText().toString(), city.getText().toString());
-////                    (int ID, String name, Bitmap image, String description, int price, String size, String phoneNo, String city)
-//
-//                    // Add the DressModel to the database
-//                    boolean success = databaseHelper.addOne(dressModel);
-//
-//                    if(success){
-//
-//                        Toast.makeText(getActivity(), "Dress added successfully", Toast.LENGTH_SHORT).show();
-//                        getParentFragmentManager().beginTransaction().replace(R.id.fragment_container, new AddFragmentActivity()).commit();
-//
-//                    }else{
-//                        Toast.makeText(getActivity(), "Something went wrong", Toast.LENGTH_SHORT).show();
-//                    }
-//
-//
-//
-//            }
-//        });
-
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

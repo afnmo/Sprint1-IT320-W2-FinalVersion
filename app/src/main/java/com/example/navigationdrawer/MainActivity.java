@@ -95,7 +95,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 }
                 break;
             case R.id.nav_add:
-//                not loged in yet
+//                not logged in yet
                 if(menu.getItem(1).isVisible()){
                     Intent intent = new Intent(getApplicationContext(), login.class);
                     startActivity(intent);

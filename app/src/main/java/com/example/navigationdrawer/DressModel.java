@@ -30,12 +30,12 @@ this.ID = ID;
     }
 
 
-    public DressModel(int ID, String name, Bitmap image){
-        this.ID = ID;
-        this.name = name;
-        this.image = image;
-
-    }
+//    public DressModel(int ID, String name, Bitmap image){
+//        this.ID = ID;
+//        this.name = name;
+//        this.image = image;
+//
+//    }
 
     public Bitmap getImage() {
         return image;

@@ -25,4 +25,6 @@
 
     <color name="LogoColor">#DDC5C0</color>
     <color name="iconColor">#C28E8E</color>
+
+    <color name="pinkBackground">#e4d7da</color>
 </resources>

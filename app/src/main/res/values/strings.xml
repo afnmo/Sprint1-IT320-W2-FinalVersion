@@ -17,6 +17,16 @@
     <string name="city">City</string>
     <string name="neighborhood">Neighborhood</string>
     <string name="phone_number">Phone Number</string>
-<!--    <string name="done">done</string>-->
+    <!--    <string name="done">done</string>-->
+
+    <string-array name="days_array">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+    </string-array>
 
 </resources>
