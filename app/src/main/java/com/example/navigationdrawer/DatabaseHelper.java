@@ -17,6 +17,7 @@ import java.util.List;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 
+    private String renterName;
 //    database name
     public static final String DBNAME = "bridellaDB3.db";
 
@@ -237,6 +238,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 
     public void saveUsername(String username) {
+        renterName = username;
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString("current_username", username);
         editor.apply();
@@ -282,6 +284,56 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
 
+    public List<DressModel> getAllRentedItems() {
+        List<DressModel> rentedList = new ArrayList<>();
+        String queryString = "SELECT " + DRESS_TABLE + ".* FROM " + DRESS_TABLE + " JOIN " + RENT_TABLE
+                + " ON " + DRESS_TABLE + "." + COLUMN_ID + " = " + RENT_TABLE + "." + COLUMN_ITEM_ID_FK
+                + " WHERE " + RENT_TABLE + "." + COLUMN_USERNAME_FK + " = " + getUsername();
 
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(queryString, null);
+
+        if(cursor.moveToFirst()){
+            do {
+                int dressId = cursor.getInt(0);
+                String dressName = cursor.getString(1);
+                byte[] imageByteArray = cursor.getBlob(2);
+                // Convert byte array to bitmap for displaying
+                Bitmap imageBitmap = BitmapFactory.decodeByteArray(imageByteArray, 0, imageByteArray.length);
+
+                String description = cursor.getString(3);
+                int price = cursor.getInt(4);
+                String size = cursor.getString(5);
+                String phone = cursor.getString(6);
+                String city = cursor.getString(7);
+
+                DressModel dress = new DressModel(dressId, dressName, imageBitmap, description, price, size, phone, city);
+                rentedList.add(dress);
+            } while(cursor.moveToNext());
+        }
+
+        cursor.close();
+        db.close();
+
+        return rentedList;
+    }
+
+
+    public int getItemID() {
+        String queryString = "SELECT " + COLUMN_ITEM_ID_FK + " FROM " + RENT_TABLE + " WHERE " + COLUMN_USERNAME_FK + " = " + getUsername();
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(queryString, null);
+        int id = -1;
+        if(cursor.moveToFirst()){
+            do {
+                id = cursor.getInt(0);
+            } while(cursor.moveToNext());
+        }
+
+        cursor.close();
+        db.close();
+
+        return id;
+    }
 
 }

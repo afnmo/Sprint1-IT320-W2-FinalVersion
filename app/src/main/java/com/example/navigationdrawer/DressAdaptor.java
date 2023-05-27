@@ -67,6 +67,7 @@ public class DressAdaptor extends RecyclerView.Adapter<DressAdaptor.ViewHolder>{
         this.rvPrograms = rvPrograms;
         this.recyclerViewInterface = recyclerViewInterface;
     }
+
     @NonNull
     @Override
     public DressAdaptor.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {

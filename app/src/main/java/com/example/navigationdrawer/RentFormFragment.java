@@ -3,6 +3,8 @@ package com.example.navigationdrawer;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -63,6 +65,13 @@ public class RentFormFragment extends Fragment implements AdapterView.OnItemSele
 
                 if(success){
                     Toast.makeText(getActivity(), "Dress rented successfully", Toast.LENGTH_SHORT).show();
+                    Fragment fragment = new ViewRentedItemsFragment();
+                    fragment.setArguments(bundle);
+                    FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
+                    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                    fragmentTransaction.replace(R.id.fragment_container, fragment);
+                    fragmentTransaction.addToBackStack(null);
+                    fragmentTransaction.commit();
                 }else{
                     Toast.makeText(getActivity(), "Something went wrong", Toast.LENGTH_SHORT).show();
                 }

@@ -9,6 +9,8 @@ public class RentedItems {
     private String pickDate;
     private String name;
     private String phone;
+    private int itemID;
+    private String currentUser;
 
     public RentedItems(int id, int days, String occDate, String pickDate, String name, String phone) {
         this.id = id;
