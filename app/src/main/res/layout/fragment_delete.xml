@@ -6,16 +6,6 @@
     android:layout_height="match_parent"
     tools:context=".DeleteFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-<!--    <TextView-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:text="Delete fragment"-->
-<!--        android:textSize="30sp"-->
-<!--        android:layout_centerInParent="true"-->
-<!--        android:textColor="@color/pink"-->
-<!--        />-->
-
     <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="match_parent"

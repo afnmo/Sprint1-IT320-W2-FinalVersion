@@ -32,16 +32,17 @@ public class Homepage extends Fragment implements RecyclerViewInterface{
 
         databaseHelper = new DatabaseHelper(container.getContext());
         dressModelList = databaseHelper.getAll();
+       // dressModelList = databaseHelper.getAllTest();
         rvPrograms = rootView.findViewById(R.id.rvPrograms);
         rvPrograms.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(container.getContext());
         rvPrograms.setLayoutManager(layoutManager);
         dressAdapter = new DressAdaptor(container.getContext(), dressModelList, rvPrograms, this);
         rvPrograms.setAdapter(dressAdapter);
-
-
-        DatabaseHelper databaseHelper = new DatabaseHelper(container.getContext());
-        List<DressModel> dressList = databaseHelper.getAll();
+//
+//
+//        DatabaseHelper databaseHelper = new DatabaseHelper(container.getContext());
+//        List<DressModel> dressList = databaseHelper.getAll();
 
         return rootView;
 

@@ -19,16 +19,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     private String renterName;
 //    database name
-    public static final String DBNAME = "bridellaDB3.db";
+    public static final String DBNAME = "bridella.db";
 
 //    table 1
     public static final String ALL_USERS_TABLE = "allUsers";
 
 //    table 2
-    public static final String DRESS_TABLE = "DRESS_TABLE";
+    public static final String DRESS_TABLE = "ITEM";
 
 //    table 3
-    public static final String RENT_TABLE = "rent";
+    public static final String RENT_TABLE = "RENT";
 
 
 //    table 1 columns
@@ -39,7 +39,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 //    table 2 columns
     public static final String COLUMN_DRESS_NAME = "dressName";
     public static final String COLUMN_IMG = "image";
-    public static final String COLUMN_ID = "id";
+    public static final String COLUMN_ID = "itemID";
     public static final String COLUMN_USERNAME_FK = "userName";
     public static final String COLUMN_DESCRIPTION = "description";
     public static final String COLUMN_PRICE = "price";
@@ -53,7 +53,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String COLUMN_DAYS = "days";
     public static final String COLUMN_OCCASION_DATE = "occasionDate";
     public static final String COLUMN_PICKUP_DATE = "pickupDate";
-    public static final String COLUMN_RENT_NAME = "name";
+    public static final String COLUMN_RENT_NAME = "renterName";
 //    public static final String COLUMN_PHONE = "phoneNo";
 //    public static final String COLUMN_USERNAME_FK = "userName";
     public static final String COLUMN_ITEM_ID_FK = "itemID";
@@ -167,6 +167,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 
     public List<DressModel> getAll() {
+
         List<DressModel> dressList = new ArrayList<>();
         String queryString = "SELECT * FROM " + DRESS_TABLE;
         SQLiteDatabase db = this.getReadableDatabase();
@@ -288,7 +289,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         List<DressModel> rentedList = new ArrayList<>();
         String queryString = "SELECT " + DRESS_TABLE + ".* FROM " + DRESS_TABLE + " JOIN " + RENT_TABLE
                 + " ON " + DRESS_TABLE + "." + COLUMN_ID + " = " + RENT_TABLE + "." + COLUMN_ITEM_ID_FK
-                + " WHERE " + RENT_TABLE + "." + COLUMN_USERNAME_FK + " = " + getUsername();
+                + " WHERE " + RENT_TABLE + "." + COLUMN_USERNAME_FK + " = '" + getUsername() + "'";
 
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(queryString, null);
@@ -319,6 +320,40 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
 
+    public List<DressModel> getAllTest() {
+        List<DressModel> rentedList = new ArrayList<>();
+        String queryString = "SELECT " + DRESS_TABLE + ".* FROM " + DRESS_TABLE + " JOIN " + RENT_TABLE
+                + " ON " + DRESS_TABLE + "." + COLUMN_ID + " = " + RENT_TABLE + "." + COLUMN_ITEM_ID_FK
+                + " WHERE " + RENT_TABLE + "." + COLUMN_USERNAME_FK + " != '" + getUsername() + "'";
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(queryString, null);
+
+        if(cursor.moveToFirst()){
+            do {
+                int dressId = cursor.getInt(0);
+                String dressName = cursor.getString(1);
+                byte[] imageByteArray = cursor.getBlob(2);
+                // Convert byte array to bitmap for displaying
+                Bitmap imageBitmap = BitmapFactory.decodeByteArray(imageByteArray, 0, imageByteArray.length);
+
+                String description = cursor.getString(3);
+                int price = cursor.getInt(4);
+                String size = cursor.getString(5);
+                String phone = cursor.getString(6);
+                String city = cursor.getString(7);
+
+                DressModel dress = new DressModel(dressId, dressName, imageBitmap, description, price, size, phone, city);
+                rentedList.add(dress);
+            } while(cursor.moveToNext());
+        }
+
+        cursor.close();
+        db.close();
+
+        return rentedList;
+    }
+
     public int getItemID() {
         String queryString = "SELECT " + COLUMN_ITEM_ID_FK + " FROM " + RENT_TABLE + " WHERE " + COLUMN_USERNAME_FK + " = " + getUsername();
         SQLiteDatabase db = this.getReadableDatabase();
@@ -336,4 +371,31 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return id;
     }
 
+    public boolean returnItem(DressModel cModel) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        String whereClause = COLUMN_ITEM_ID_FK + "=? AND " + COLUMN_USERNAME_FK + "=?";
+        String[] whereArgs = new String[] { String.valueOf(cModel.getID()), getUsername() };
+        int rowsDeleted = db.delete(RENT_TABLE, whereClause, whereArgs);
+        db.close();
+        return rowsDeleted > 0;
+    }
+
+//    public boolean returnItem(DressModel  cModel) {
+//        SQLiteDatabase db = this.getWritableDatabase();
+//        String queryString = "Delete From " + RENT_TABLE + " WHERE " + COLUMN_ITEM_ID_FK + " = " + cModel.getID();
+//        Cursor cursor = db.rawQuery(queryString, null);
+//        if (cursor.moveToFirst()) {
+//            return true;
+//        } else {
+//            // nothing happens. no one is added.
+//            return false;
+//        }
+//        //close
+//    }
+
+//        call getAllRentedItems()
+//        search for itemID with userName equals to getUsername()
+//        exist?
+
+//    search for itemID with userName equals to getUsername() in getAllRentedItems() then do not retreieve this itemID from the getAll()
 }

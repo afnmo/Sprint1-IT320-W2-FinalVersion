@@ -73,7 +73,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             case  R.id.nav_login:
 
                 menu.getItem(1).setVisible(false);
-                menu.getItem(4).setVisible(true);
+                menu.getItem(5).setVisible(true);
 
                 Intent i = new Intent(getApplicationContext(), login.class);
                 startActivity(i);
@@ -88,7 +88,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     startActivity(intent);
                     Toast.makeText(this, "Login First", Toast.LENGTH_SHORT).show();
                     menu.getItem(1).setVisible(false);
-                    menu.getItem(4).setVisible(true);
+                    menu.getItem(5).setVisible(true);
                 }
                 else{
                     getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new DeleteFragment()).commit();
@@ -101,14 +101,27 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     startActivity(intent);
                     Toast.makeText(this, "Login First", Toast.LENGTH_SHORT).show();
                     menu.getItem(1).setVisible(false);
-                    menu.getItem(4).setVisible(true);
+                    menu.getItem(5).setVisible(true);
                 }
                 else{
                     getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new AddFragmentActivity()).commit();
                 }
-//                Intent i = new Intent(getApplicationContext(), AddFragmentActivity.class);
-//                startActivity(i);
                 break;
+
+            case R.id.nav_rentedItems:
+//                not logged in yet
+                if(menu.getItem(1).isVisible()){
+                    Intent intent = new Intent(getApplicationContext(), login.class);
+                    startActivity(intent);
+                    Toast.makeText(this, "Login First", Toast.LENGTH_SHORT).show();
+                    menu.getItem(1).setVisible(false);
+                    menu.getItem(5).setVisible(true);
+                }
+                else{
+                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new ViewRentedItemsFragment()).commit();
+                }
+                break;
+
             case R.id.nav_logout:
 //                Toast.makeText(this, "Logout!", Toast.LENGTH_SHORT).show();
                 SharedPreferences sharedPreferences = getSharedPreferences("my_app_preferences", MODE_PRIVATE);

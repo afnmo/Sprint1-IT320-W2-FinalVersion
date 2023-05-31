@@ -58,7 +58,6 @@ public class DressAdaptor extends RecyclerView.Adapter<DressAdaptor.ViewHolder>{
         }
 
 
-
     }
 
     public DressAdaptor(Context context, List<DressModel> dressModelList, RecyclerView rvPrograms, RecyclerViewInterface recyclerViewInterface){
@@ -67,6 +66,7 @@ public class DressAdaptor extends RecyclerView.Adapter<DressAdaptor.ViewHolder>{
         this.rvPrograms = rvPrograms;
         this.recyclerViewInterface = recyclerViewInterface;
     }
+
 
     @NonNull
     @Override

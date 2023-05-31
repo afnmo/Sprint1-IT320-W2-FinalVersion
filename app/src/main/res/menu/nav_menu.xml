@@ -10,9 +10,6 @@
             android:icon="@drawable/nav_home"
             android:title="Home" />
 
-
-<!--        <group android:checkableBehavior="single">-->
-
             <item
                 android:id="@+id/nav_login"
                 android:icon="@drawable/baseline_login_24"
@@ -29,7 +26,11 @@
                 android:icon="@drawable/nav_remove"
                 android:title="Remove item" />
 
-<!--        </group>-->
+        <item
+            android:id="@+id/nav_rentedItems"
+            android:icon="@drawable/rented_list"
+            android:title="Rented list" />
+
 
         <item
             android:id="@+id/nav_logout"
@@ -38,41 +39,5 @@
             android:visible="false"/>
 
     </group>
-
-<!--    <item android:title="Account"-->
-<!--        >-->
-<!--        <menu>-->
-
-<!--            <group android:checkableBehavior="single">-->
-<!--&lt;!&ndash;            <item&ndash;&gt;-->
-<!--&lt;!&ndash;                android:id="@+id/nav_account"&ndash;&gt;-->
-<!--&lt;!&ndash;                android:icon="@drawable/nav_account"&ndash;&gt;-->
-<!--&lt;!&ndash;                android:title="Profile" />&ndash;&gt;-->
-<!--                <item-->
-<!--                    android:id="@+id/nav_login"-->
-<!--                    android:icon="@drawable/baseline_login_24"-->
-<!--                    android:title="Login"-->
-<!--                    android:visible="true"/>-->
-
-<!--            <item-->
-<!--                android:id="@+id/nav_add"-->
-<!--                android:icon="@drawable/nav_add"-->
-<!--                android:title="Add item" />-->
-
-<!--            <item-->
-<!--                android:id="@+id/nav_remove"-->
-<!--                android:icon="@drawable/nav_remove"-->
-<!--                android:title="Remove item" />-->
-
-<!--            </group>-->
-
-<!--            <item-->
-<!--                android:id="@+id/nav_logout"-->
-<!--                android:icon="@drawable/nav_logout"-->
-<!--                android:title="Log out"-->
-<!--                android:visible="false"/>-->
-<!--        </menu>-->
-<!--    </item>-->
-
 
 </menu>

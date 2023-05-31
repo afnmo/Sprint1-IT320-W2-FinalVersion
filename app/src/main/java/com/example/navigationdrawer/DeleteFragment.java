@@ -43,8 +43,8 @@ public class DeleteFragment extends Fragment {
         deleteRecyclerView.setLayoutManager(layoutManager);
         deletePageAdapter = new DeletePageAdapter(container.getContext(), dressModelList);
         deleteRecyclerView.setAdapter(deletePageAdapter);
-        DatabaseHelper databaseHelper = new DatabaseHelper(container.getContext());
-        List<DressModel> dressList = databaseHelper.getAll();
+//        DatabaseHelper databaseHelper = new DatabaseHelper(container.getContext());
+//        List<DressModel> dressList = databaseHelper.getAll();
 
 //        lv_customerList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 //            @Override
@@ -60,13 +60,6 @@ public class DeleteFragment extends Fragment {
         return rootView;
 
     }
-//
-//    private void ShowCustomersOnListView(DatabaseHelper dataBaseHelper) {
-//        List<DressModel> dressModels = dataBaseHelper.getAll();
-//        deletePageAdapter = new DeletePageAdapter(dressModels);
-//        deleteRecyclerView.setAdapter(deletePageAdapter);
-//    }
-
 
 
 }
