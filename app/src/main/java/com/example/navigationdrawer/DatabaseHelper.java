@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.util.Log;
 
 import androidx.annotation.Nullable;
 
@@ -46,6 +47,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String COLUMN_SIZE = "size";
     public static final String COLUMN_PHONE = "phoneNo";
     public static final String COLUMN_CITY = "city";
+    public static final String COLUMN_IS_RENTED = "isRented";
 
 //    table 3 columns
 
@@ -76,6 +78,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         + COLUMN_SIZE + " TEXT, "
         + COLUMN_PHONE + " TEXT, "
         + COLUMN_CITY + " TEXT, "
+        + COLUMN_IS_RENTED + " TEXT, "
         + COLUMN_USERNAME_FK + " TEXT NOT NULL, "
         + "FOREIGN KEY (" + COLUMN_USERNAME_FK + ") REFERENCES " + ALL_USERS_TABLE + "(" + COLUMN_USERNAME + ")"
         + ")";
@@ -134,6 +137,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         contentValues.put(COLUMN_SIZE, cModel.getSize());
         contentValues.put(COLUMN_PHONE, cModel.getPhoneNo());
         contentValues.put(COLUMN_CITY, cModel.getCity());
+        contentValues.put(COLUMN_IS_RENTED, cModel.isRented());
 
 
         // Convert bitmap to byte array for storing in database
@@ -169,11 +173,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public List<DressModel> getAll() {
 
         List<DressModel> dressList = new ArrayList<>();
-        String queryString = "SELECT * FROM " + DRESS_TABLE;
+        String queryString = "SELECT * FROM " + DRESS_TABLE + " WHERE " + COLUMN_IS_RENTED + " = " + 0;
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(queryString, null);
 
+        System.out.println("cursor.moveToFirst() in getALL() = " + cursor.moveToFirst());
         if(cursor.moveToFirst()){
+            System.out.println("ENTERED cursor.moveToFirst()");
             do {
                 int dressId = cursor.getInt(0);
                 String dressName = cursor.getString(1);
@@ -186,8 +192,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 String size = cursor.getString(5);
                 String phone = cursor.getString(6);
                 String city = cursor.getString(7);
+                boolean isRented = Boolean.parseBoolean(cursor.getString(8));
 
-                DressModel dress = new DressModel(dressId, dressName, imageBitmap, description, price, size, phone, city);
+                DressModel dress = new DressModel(dressId, dressName, imageBitmap, description, price, size, phone, city, isRented);
                 dressList.add(dress);
             } while(cursor.moveToNext());
         }
@@ -198,6 +205,40 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return dressList;
     }
 
+    public List<DressModel> getUserOwnItems() {
+
+        List<DressModel> dressList = new ArrayList<>();
+        String queryString = "SELECT * FROM " + DRESS_TABLE + " WHERE " + COLUMN_IS_RENTED + " = " + 0 + " AND " + COLUMN_USERNAME + " = '" + getUsername() + "'";
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(queryString, null);
+
+        System.out.println("cursor.moveToFirst() in getALL() = " + cursor.moveToFirst());
+        if(cursor.moveToFirst()){
+            System.out.println("ENTERED cursor.moveToFirst()");
+            do {
+                int dressId = cursor.getInt(0);
+                String dressName = cursor.getString(1);
+                byte[] imageByteArray = cursor.getBlob(2);
+                // Convert byte array to bitmap for displaying
+                Bitmap imageBitmap = BitmapFactory.decodeByteArray(imageByteArray, 0, imageByteArray.length);
+
+                String description = cursor.getString(3);
+                int price = cursor.getInt(4);
+                String size = cursor.getString(5);
+                String phone = cursor.getString(6);
+                String city = cursor.getString(7);
+                boolean isRented = Boolean.parseBoolean(cursor.getString(8));
+
+                DressModel dress = new DressModel(dressId, dressName, imageBitmap, description, price, size, phone, city, isRented);
+                dressList.add(dress);
+            } while(cursor.moveToNext());
+        }
+
+        cursor.close();
+        db.close();
+
+        return dressList;
+    }
 
 //    user
 
@@ -250,18 +291,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
 
-//    private static final String CREATE_TABLE_RENT_STATEMENT = "CREATE TABLE " + RENT_TABLE + "("
-//        + COLUMN_RENT_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
-//        + COLUMN_DAYS + " INT, "
-//        + COLUMN_OCCASION_DATE + " DATE, "
-//        + COLUMN_PICKUP_DATE + " DATE, "
-//        + COLUMN_RENT_NAME + " TEXT, "
-//        + COLUMN_PHONE + " TEXT, "
-//        + COLUMN_ITEM_ID_FK + " TEXT, "
-//        + COLUMN_USERNAME_FK + " TEXT NOT NULL, "
-//        + "FOREIGN KEY (" + COLUMN_USERNAME_FK + ") REFERENCES " + ALL_USERS_TABLE + "(" + COLUMN_USERNAME + "), "
-//        + "FOREIGN KEY (" + COLUMN_ITEM_ID_FK + ") REFERENCES " + DRESS_TABLE + "(" + COLUMN_ID + ")"
-//        + ")";
+
 
     public boolean addRentedItem(RentedItems rentedItems, int rentedItemID){
         SQLiteDatabase db = this.getWritableDatabase();
@@ -274,7 +304,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         contentValues.put(COLUMN_ITEM_ID_FK, rentedItemID);
         contentValues.put(COLUMN_USERNAME_FK, getUsername());
 
-
         long insert = db.insert(RENT_TABLE, null, contentValues);
 
         if(insert == -1){
@@ -282,6 +311,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         } else {
             return true;
         }
+    }
+
+    public boolean updateRentedColumnToTrue(int rentedItemID) {
+        String queryString = "UPDATE " + DRESS_TABLE + " SET " + COLUMN_IS_RENTED + " = " + 1 + " WHERE " + COLUMN_ID + " = " + rentedItemID;
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL(queryString);
+        db.close();
+        return true;
     }
 
 
@@ -307,8 +344,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 String size = cursor.getString(5);
                 String phone = cursor.getString(6);
                 String city = cursor.getString(7);
+                boolean isRented = Boolean.parseBoolean(cursor.getString(8));
 
-                DressModel dress = new DressModel(dressId, dressName, imageBitmap, description, price, size, phone, city);
+                DressModel dress = new DressModel(dressId, dressName, imageBitmap, description, price, size, phone, city, isRented);
                 rentedList.add(dress);
             } while(cursor.moveToNext());
         }
@@ -320,39 +358,43 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
 
-    public List<DressModel> getAllTest() {
-        List<DressModel> rentedList = new ArrayList<>();
-        String queryString = "SELECT " + DRESS_TABLE + ".* FROM " + DRESS_TABLE + " JOIN " + RENT_TABLE
-                + " ON " + DRESS_TABLE + "." + COLUMN_ID + " = " + RENT_TABLE + "." + COLUMN_ITEM_ID_FK
-                + " WHERE " + RENT_TABLE + "." + COLUMN_USERNAME_FK + " != '" + getUsername() + "'";
-
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery(queryString, null);
-
-        if(cursor.moveToFirst()){
-            do {
-                int dressId = cursor.getInt(0);
-                String dressName = cursor.getString(1);
-                byte[] imageByteArray = cursor.getBlob(2);
-                // Convert byte array to bitmap for displaying
-                Bitmap imageBitmap = BitmapFactory.decodeByteArray(imageByteArray, 0, imageByteArray.length);
-
-                String description = cursor.getString(3);
-                int price = cursor.getInt(4);
-                String size = cursor.getString(5);
-                String phone = cursor.getString(6);
-                String city = cursor.getString(7);
-
-                DressModel dress = new DressModel(dressId, dressName, imageBitmap, description, price, size, phone, city);
-                rentedList.add(dress);
-            } while(cursor.moveToNext());
-        }
-
-        cursor.close();
-        db.close();
-
-        return rentedList;
-    }
+//    public List<DressModel> getAllTest() {
+//        List<DressModel> rentedList = new ArrayList<>();
+//        System.out.println("getUsername(): " + getUsername());
+//        String queryString = "SELECT " + DRESS_TABLE + ".* FROM " + DRESS_TABLE + " JOIN " + RENT_TABLE
+//                + " ON " + DRESS_TABLE + "." + COLUMN_ID + " = " + RENT_TABLE + "." + COLUMN_ITEM_ID_FK
+//                + " WHERE " + RENT_TABLE + "." + COLUMN_USERNAME_FK + " != '" + getUsername() + "'";
+//
+//        System.out.println("queryString: " + queryString);
+//        SQLiteDatabase db = this.getReadableDatabase();
+//        Cursor cursor = db.rawQuery(queryString, null);
+//        System.out.println("cursor.moveToFirst(): " + cursor.moveToFirst());
+//
+//        if(cursor.moveToFirst()){
+//            System.out.println("Hello, cursor.moveToFirst() entered");
+//            do {
+//                int dressId = cursor.getInt(0);
+//                String dressName = cursor.getString(1);
+//                byte[] imageByteArray = cursor.getBlob(2);
+//                // Convert byte array to bitmap for displaying
+//                Bitmap imageBitmap = BitmapFactory.decodeByteArray(imageByteArray, 0, imageByteArray.length);
+//
+//                String description = cursor.getString(3);
+//                int price = cursor.getInt(4);
+//                String size = cursor.getString(5);
+//                String phone = cursor.getString(6);
+//                String city = cursor.getString(7);
+//
+//                DressModel dress = new DressModel(dressId, dressName, imageBitmap, description, price, size, phone, city);
+//                rentedList.add(dress);
+//            } while(cursor.moveToNext());
+//        }
+//
+//        cursor.close();
+//        db.close();
+//
+//        return rentedList;
+//    }
 
     public int getItemID() {
         String queryString = "SELECT " + COLUMN_ITEM_ID_FK + " FROM " + RENT_TABLE + " WHERE " + COLUMN_USERNAME_FK + " = " + getUsername();
@@ -373,6 +415,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public boolean returnItem(DressModel cModel) {
         SQLiteDatabase db = this.getWritableDatabase();
+        String queryString = "UPDATE " + DRESS_TABLE + " SET " + COLUMN_IS_RENTED + " = " + 0 + " WHERE " + COLUMN_ID + " = " + cModel.getID();
+        db.execSQL(queryString);
         String whereClause = COLUMN_ITEM_ID_FK + "=? AND " + COLUMN_USERNAME_FK + "=?";
         String[] whereArgs = new String[] { String.valueOf(cModel.getID()), getUsername() };
         int rowsDeleted = db.delete(RENT_TABLE, whereClause, whereArgs);

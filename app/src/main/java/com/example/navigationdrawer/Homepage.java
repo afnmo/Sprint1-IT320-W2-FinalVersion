@@ -20,6 +20,7 @@ import java.util.List;
 
 public class Homepage extends Fragment implements RecyclerViewInterface{
 
+    MenuHelper menuHelper;
     DatabaseHelper databaseHelper;
     RecyclerView rvPrograms;
     DressAdaptor dressAdapter;
@@ -32,13 +33,13 @@ public class Homepage extends Fragment implements RecyclerViewInterface{
 
         databaseHelper = new DatabaseHelper(container.getContext());
         dressModelList = databaseHelper.getAll();
-       // dressModelList = databaseHelper.getAllTest();
         rvPrograms = rootView.findViewById(R.id.rvPrograms);
         rvPrograms.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(container.getContext());
         rvPrograms.setLayoutManager(layoutManager);
         dressAdapter = new DressAdaptor(container.getContext(), dressModelList, rvPrograms, this);
         rvPrograms.setAdapter(dressAdapter);
+        menuHelper = new MenuHelper();
 //
 //
 //        DatabaseHelper databaseHelper = new DatabaseHelper(container.getContext());
@@ -56,8 +57,13 @@ public class Homepage extends Fragment implements RecyclerViewInterface{
         bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
         byte[] byteArray = stream.toByteArray();
 
-
+// I switch from new bundle to get arguments
         Bundle bundle = new Bundle();
+        Bundle bundle1 = getArguments();
+
+        menuHelper = bundle1.getParcelable("menu");
+        bundle.putParcelable("menu", menuHelper);
+// get arguments menu
         bundle.putString("name", dressModelList.get(position).getName());
         bundle.putByteArray("image", byteArray);
         bundle.putString("description", dressModelList.get(position).getDescription());

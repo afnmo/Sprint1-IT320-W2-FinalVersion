@@ -13,8 +13,9 @@ public class DressModel {
     private String size;
     private String phoneNo;
     private String city;
+    private boolean isRented;
 
-    public DressModel(int ID, String name, Bitmap image, String description, int price, String size, String phoneNo, String city) {
+    public DressModel(int ID, String name, Bitmap image, String description, int price, String size, String phoneNo, String city, boolean isRented) {
         this.ID = ID;
         this.name = name;
         this.image = image;
@@ -23,6 +24,7 @@ public class DressModel {
         this.size = size;
         this.phoneNo = phoneNo;
         this.city = city;
+        this.isRented = isRented;
     }
 
     public DressModel(int ID){
@@ -33,6 +35,14 @@ this.ID = ID;
 //    public DressModel(int ID, String name, Bitmap image){
 //        this.ID = ID;
 //        this.name = name;
+
+    public boolean isRented() {
+        return isRented;
+    }
+
+    public void setRented(boolean rented) {
+        isRented = rented;
+    }
 //        this.image = image;
 //
 //    }

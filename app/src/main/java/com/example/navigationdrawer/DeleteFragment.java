@@ -36,7 +36,8 @@ public class DeleteFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_delete, container, false);
 //        deleteButton = rootView.findViewById(R.id.deleteButton);
         databaseHelper = new DatabaseHelper(container.getContext());
-        dressModelList = databaseHelper.getAll();
+//        dressModelList = databaseHelper.getAll();
+        dressModelList = databaseHelper.getUserOwnItems();
         deleteRecyclerView = rootView.findViewById(R.id.deleteRecyclerView);
         deleteRecyclerView.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(container.getContext());

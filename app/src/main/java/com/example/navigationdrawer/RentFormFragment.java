@@ -1,5 +1,9 @@
 package com.example.navigationdrawer;
 
+import static android.content.Context.MODE_PRIVATE;
+
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -7,6 +11,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -18,14 +23,16 @@ import android.widget.Toast;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 
 public class RentFormFragment extends Fragment implements AdapterView.OnItemSelectedListener {
 
 
-
+    MenuHelper menuHelper;
     Spinner spinner;
     EditText occDate, pickDate, name, phone;
     Button rentButton;
@@ -50,32 +57,46 @@ public class RentFormFragment extends Fragment implements AdapterView.OnItemSele
         rentButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+//                here check login
+//                MyObject myObject = getArguments().getParcelable("myObjectKey");
+                menuHelper = bundle.getParcelable("menu");
+                Menu menu = menuHelper.getMenu();
+                if(menu.getItem(1).isVisible()){
+                    Intent intent = new Intent(getActivity(), login.class);
+                    startActivity(intent);
+                    Toast.makeText(getActivity(), "Login First", Toast.LENGTH_SHORT).show();
+                    menu.getItem(1).setVisible(false);
+                    menu.getItem(5).setVisible(true);
+                }
+                else {
 
-                int days = Integer.parseInt(spinner.getSelectedItem().toString());
-                String occasionDate = occDate.getText().toString();
-                String pickupDate = pickDate.getText().toString();
-                String renterName = name.getText().toString();
-                String contact = phone.getText().toString();
+                    int days = Integer.parseInt(spinner.getSelectedItem().toString());
+                    String occasionDate = occDate.getText().toString();
+                    String pickupDate = pickDate.getText().toString();
+                    String renterName = name.getText().toString();
+                    String contact = phone.getText().toString();
 
 //                public RentedItems(int id, int days, Date occDate, Date pickDate, String name, String phone) {
-                rentedItems = new RentedItems(-1, days, occasionDate, pickupDate, renterName, contact);
+                    rentedItems = new RentedItems(-1, days, occasionDate, pickupDate, renterName, contact);
 
 
-                boolean success = databaseHelper.addRentedItem(rentedItems, rentedItemID);
+                    boolean success = databaseHelper.addRentedItem(rentedItems, rentedItemID);
 
-                if(success){
-                    Toast.makeText(getActivity(), "Dress rented successfully", Toast.LENGTH_SHORT).show();
-                    Fragment fragment = new ViewRentedItemsFragment();
-                    fragment.setArguments(bundle);
-                    FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
-                    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                    fragmentTransaction.replace(R.id.fragment_container, fragment);
-                    fragmentTransaction.addToBackStack(null);
-                    fragmentTransaction.commit();
-                }else{
-                    Toast.makeText(getActivity(), "Something went wrong", Toast.LENGTH_SHORT).show();
+
+                    if (success) {
+                        databaseHelper.updateRentedColumnToTrue(rentedItemID);
+                        Toast.makeText(getActivity(), "Dress rented successfully", Toast.LENGTH_SHORT).show();
+                        Fragment fragment = new ViewRentedItemsFragment();
+                        fragment.setArguments(bundle);
+                        FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
+                        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                        fragmentTransaction.replace(R.id.fragment_container, fragment);
+                        fragmentTransaction.addToBackStack(null);
+                        fragmentTransaction.commit();
+                    } else {
+                        Toast.makeText(getActivity(), "Something went wrong", Toast.LENGTH_SHORT).show();
+                    }
                 }
-
             }
         });
 

@@ -171,7 +171,7 @@ public class AddFragmentActivity extends Fragment {
                     }
                 }
 
-                DressModel dressModel = new DressModel(-1, name, dressImage, dressDescription, dressPrice, dressSize, dressPhone, dressCity);
+                DressModel dressModel = new DressModel(-1, name, dressImage, dressDescription, dressPrice, dressSize, dressPhone, dressCity, false);
 
                 // Add the DressModel to the database
                 boolean success = databaseHelper.addOne(dressModel);

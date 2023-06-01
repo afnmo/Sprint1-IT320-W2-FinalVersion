@@ -8,15 +8,21 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -35,9 +41,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     NavigationView navigationView;
     private DrawerLayout drawerLayout;
-
+    SharedPreferences sharedPreferences;
     Menu menu;
-
+    MenuHelper menuHelper;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,16 +56,24 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         drawerLayout = findViewById(R.id.drawer_layout);
         navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-
         menu = navigationView.getMenu();
+        menuHelper = new MenuHelper(menu);
+        menuHelper.setMenu(menu);
+        Bundle bundle = new Bundle();
+        bundle.putParcelable("menu", menuHelper);
 
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.open_nav, R.string.close_nav);
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
         if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new Homepage()).commit();
+            Fragment fragment = new Homepage();
+            fragment.setArguments(bundle);
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, fragment).commit();
             navigationView.setCheckedItem(R.id.nav_home);
         }
+
+
+
 
     }
 
@@ -124,7 +138,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             case R.id.nav_logout:
 //                Toast.makeText(this, "Logout!", Toast.LENGTH_SHORT).show();
-                SharedPreferences sharedPreferences = getSharedPreferences("my_app_preferences", MODE_PRIVATE);
+                sharedPreferences = getSharedPreferences("my_app_preferences", MODE_PRIVATE);
                 SharedPreferences.Editor editor = sharedPreferences.edit();
                 editor.remove("current_username");
                 editor.apply();
@@ -147,6 +161,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
 
     }
+
 }
 
 
