@@ -57,18 +57,7 @@ public class RentFormFragment extends Fragment implements AdapterView.OnItemSele
         rentButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                here check login
-//                MyObject myObject = getArguments().getParcelable("myObjectKey");
-                menuHelper = bundle.getParcelable("menu");
-                Menu menu = menuHelper.getMenu();
-                if(menu.getItem(1).isVisible()){
-                    Intent intent = new Intent(getActivity(), login.class);
-                    startActivity(intent);
-                    Toast.makeText(getActivity(), "Login First", Toast.LENGTH_SHORT).show();
-                    menu.getItem(1).setVisible(false);
-                    menu.getItem(5).setVisible(true);
-                }
-                else {
+
 
                     int days = Integer.parseInt(spinner.getSelectedItem().toString());
                     String occasionDate = occDate.getText().toString();
@@ -96,7 +85,7 @@ public class RentFormFragment extends Fragment implements AdapterView.OnItemSele
                     } else {
                         Toast.makeText(getActivity(), "Something went wrong", Toast.LENGTH_SHORT).show();
                     }
-                }
+
             }
         });
 

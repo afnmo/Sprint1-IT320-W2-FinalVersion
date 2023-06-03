@@ -2,6 +2,8 @@ package com.example.navigationdrawer;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -33,9 +35,6 @@ public class login extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-
-
-
         username = findViewById(R.id.username1);
         password = findViewById(R.id.password1);
         signin = findViewById(R.id.btnsignin1);
@@ -57,8 +56,10 @@ public class login extends AppCompatActivity {
 //                        for retrieving the username of current user
                         DB.saveUsername(user);
                         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                        intent.putExtra("isLoggedIn", true);
                         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
                         startActivity(intent);
+
 
 
                     } else {

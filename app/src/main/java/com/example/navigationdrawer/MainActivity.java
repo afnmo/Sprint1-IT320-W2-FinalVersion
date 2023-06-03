@@ -26,6 +26,7 @@ import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.Toast;
 //import android.widget.Toolbar;
 
@@ -33,7 +34,7 @@ import com.google.android.material.navigation.NavigationView;
 
 import java.util.ArrayList;
 import java.util.List;
-
+import java.util.Map;
 
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
@@ -43,11 +44,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private DrawerLayout drawerLayout;
     SharedPreferences sharedPreferences;
     Menu menu;
-    MenuHelper menuHelper;
+//    MenuHelper menuHelper;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
 
 
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -56,23 +58,58 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         drawerLayout = findViewById(R.id.drawer_layout);
         navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-        menu = navigationView.getMenu();
-        menuHelper = new MenuHelper(menu);
-        menuHelper.setMenu(menu);
-        Bundle bundle = new Bundle();
-        bundle.putParcelable("menu", menuHelper);
 
+        menu = navigationView.getMenu();
+//        menuHelper = new MenuHelper(menu);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.open_nav, R.string.close_nav);
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
+//        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new Homepage()).commit();
+//        navigationView.setCheckedItem(R.id.nav_home);
+
         if (savedInstanceState == null) {
-            Fragment fragment = new Homepage();
-            fragment.setArguments(bundle);
-            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, fragment).commit();
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new Homepage()).commit();
             navigationView.setCheckedItem(R.id.nav_home);
         }
 
+        // Check if the user is logged in
+//        sharedPreferences = getSharedPreferences("my_app_preferences", MODE_PRIVATE);
+//        String currentUsername = sharedPreferences.getString("current_username", null);
+//        if (currentUsername != null) {
+//            sharedPreferences = getSharedPreferences("my_app_preferences", MODE_PRIVATE);
+//            Map<String, ?> preferencesMap = sharedPreferences.getAll();
+//            for (Map.Entry<String, ?> entry : preferencesMap.entrySet()) {
+//                System.out.println("SharedPreference\n" + entry.getKey() + ": " + entry.getValue().toString());
+//            }
+//            getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, new Homepage()).commit();
+//            navigationView.setCheckedItem(R.id.nav_home);
+//
+//        }
+//        else {
+//            Intent i = new Intent(getApplicationContext(), login.class);
+//            startActivity(i);
+//        }
 
+//        if (savedInstanceState == null) {
+//
+//            Intent i = new Intent(getApplicationContext(), login.class);
+//            startActivity(i);
+
+
+//            Fragment fragment = new Login();
+//            Bundle bundle = new Bundle();
+//            bundle.putParcelable("menu", menuHelper);
+//            fragment.setArguments(bundle);
+//            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, fragment).commit();
+
+//        }
+//        else{
+//
+//            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new Homepage()).commit();
+//            navigationView.setCheckedItem(R.id.nav_home);
+//
+//        }
+//
 
 
     }
@@ -84,56 +121,56 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
-            case  R.id.nav_login:
-
-                menu.getItem(1).setVisible(false);
-                menu.getItem(5).setVisible(true);
-
-                Intent i = new Intent(getApplicationContext(), login.class);
-                startActivity(i);
-                break;
+//            case  R.id.nav_login:
+//
+////                menu.getItem(1).setVisible(false);
+////                menu.getItem(5).setVisible(true);
+//
+//                Intent i = new Intent(getApplicationContext(), login.class);
+//                startActivity(i);
+//                break;
             case R.id.nav_home:
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new Homepage()).commit();
                 break;
             case R.id.nav_remove:
 //                not loged in yet
-                if(menu.getItem(1).isVisible()){
-                    Intent intent = new Intent(getApplicationContext(), login.class);
-                    startActivity(intent);
-                    Toast.makeText(this, "Login First", Toast.LENGTH_SHORT).show();
-                    menu.getItem(1).setVisible(false);
-                    menu.getItem(5).setVisible(true);
-                }
-                else{
+//                if(menu.getItem(1).isVisible()){
+//                    Intent intent = new Intent(getApplicationContext(), login.class);
+//                    startActivity(intent);
+//                    Toast.makeText(this, "Login First", Toast.LENGTH_SHORT).show();
+//                    menu.getItem(1).setVisible(false);
+//                    menu.getItem(5).setVisible(true);
+//                }
+//                else{
                     getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new DeleteFragment()).commit();
-                }
+//                }
                 break;
             case R.id.nav_add:
 //                not logged in yet
-                if(menu.getItem(1).isVisible()){
-                    Intent intent = new Intent(getApplicationContext(), login.class);
-                    startActivity(intent);
-                    Toast.makeText(this, "Login First", Toast.LENGTH_SHORT).show();
-                    menu.getItem(1).setVisible(false);
-                    menu.getItem(5).setVisible(true);
-                }
-                else{
+//                if(menu.getItem(1).isVisible()){
+//                    Intent intent = new Intent(getApplicationContext(), login.class);
+//                    startActivity(intent);
+//                    Toast.makeText(this, "Login First", Toast.LENGTH_SHORT).show();
+//                    menu.getItem(1).setVisible(false);
+//                    menu.getItem(5).setVisible(true);
+//                }
+//                else{
                     getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new AddFragmentActivity()).commit();
-                }
+//                }
                 break;
 
             case R.id.nav_rentedItems:
 //                not logged in yet
-                if(menu.getItem(1).isVisible()){
-                    Intent intent = new Intent(getApplicationContext(), login.class);
-                    startActivity(intent);
-                    Toast.makeText(this, "Login First", Toast.LENGTH_SHORT).show();
-                    menu.getItem(1).setVisible(false);
-                    menu.getItem(5).setVisible(true);
-                }
-                else{
+//                if(menu.getItem(1).isVisible()){
+//                    Intent intent = new Intent(getApplicationContext(), login.class);
+//                    startActivity(intent);
+//                    Toast.makeText(this, "Login First", Toast.LENGTH_SHORT).show();
+//                    menu.getItem(1).setVisible(false);
+//                    menu.getItem(5).setVisible(true);
+//                }
+//                else{
                     getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new ViewRentedItemsFragment()).commit();
-                }
+//                }
                 break;
 
             case R.id.nav_logout:
@@ -149,7 +186,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
         drawerLayout.closeDrawer(GravityCompat.START);
 
-
         return true;
     }
     @Override
@@ -161,6 +197,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
 
     }
+
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        SharedPreferences sharedPreferences = getSharedPreferences("my_app_preferences", MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.clear();
+        editor.apply();
+    }
+
 
 }
 

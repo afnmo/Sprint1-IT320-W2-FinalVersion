@@ -33,6 +33,12 @@ public class Homepage extends Fragment implements RecyclerViewInterface{
 
         databaseHelper = new DatabaseHelper(container.getContext());
         dressModelList = databaseHelper.getAll();
+        if(dressModelList == null){
+            System.out.println("dressModelList is null");
+        }
+        else{
+            System.out.println("Yay!! dressModelList not null");
+        }
         rvPrograms = rootView.findViewById(R.id.rvPrograms);
         rvPrograms.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(container.getContext());
@@ -40,8 +46,7 @@ public class Homepage extends Fragment implements RecyclerViewInterface{
         dressAdapter = new DressAdaptor(container.getContext(), dressModelList, rvPrograms, this);
         rvPrograms.setAdapter(dressAdapter);
         menuHelper = new MenuHelper();
-//
-//
+
 //        DatabaseHelper databaseHelper = new DatabaseHelper(container.getContext());
 //        List<DressModel> dressList = databaseHelper.getAll();
 
@@ -57,13 +62,7 @@ public class Homepage extends Fragment implements RecyclerViewInterface{
         bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
         byte[] byteArray = stream.toByteArray();
 
-// I switch from new bundle to get arguments
         Bundle bundle = new Bundle();
-        Bundle bundle1 = getArguments();
-
-        menuHelper = bundle1.getParcelable("menu");
-        bundle.putParcelable("menu", menuHelper);
-// get arguments menu
         bundle.putString("name", dressModelList.get(position).getName());
         bundle.putByteArray("image", byteArray);
         bundle.putString("description", dressModelList.get(position).getDescription());
@@ -72,8 +71,6 @@ public class Homepage extends Fragment implements RecyclerViewInterface{
         bundle.putString("contact", dressModelList.get(position).getPhoneNo());
         bundle.putString("city", dressModelList.get(position).getCity());
         bundle.putInt("clickedItemID", dressModelList.get(position).getID());
-
-
 
         Fragment fragment = new ViewFragment();
         fragment.setArguments(bundle);

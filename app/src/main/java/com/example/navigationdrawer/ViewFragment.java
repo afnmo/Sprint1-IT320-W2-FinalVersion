@@ -21,12 +21,16 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.material.navigation.NavigationView;
+
 public class ViewFragment extends Fragment {
 
     MenuHelper menuHelper;
     Button rentButton;
     TextView name, description, price, size, contact, city;
     ImageView image;
+    NavigationView navigationView;
+    Menu menu;
 
 //    Menu menu;
     @Override
@@ -43,9 +47,25 @@ public class ViewFragment extends Fragment {
         rentButton = rootView.findViewById(R.id.rentBtn);
         menuHelper = new MenuHelper();
 
+//
+//        LayoutInflater layoutInflater = LayoutInflater.from(getContext());
+//        View anotherLayout = layoutInflater.inflate(R.layout.activity_main, container, false);
+//        navigationView = anotherLayout.findViewById(R.id.nav_view);
+//        menu = navigationView.getMenu();
+
         Bundle bundle = getArguments();
+//        Bundle bundle = arguments.getBundle("bundle");
+//        Bundle bundle1 = arguments.getBundle("bundle1");
+//        if(bundle1 == null){
+//            System.out.println("bundle1 is null");
+//        }
+//        menuHelper = bundle1.getParcelable("menu");
+//        if(menuHelper == null){
+//            System.out.println("menuHelper is null");
+//        }
+//        Bundle bundle = getArguments();
         if (bundle != null) {
-            menuHelper = bundle.getParcelable("menu");
+//            menuHelper = bundle.getParcelable("menu");
             byte[] byteArray = bundle.getByteArray("image");
             Bitmap getImage = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
             String getName = bundle.getString("name");
@@ -71,15 +91,17 @@ public class ViewFragment extends Fragment {
             @Override
             public void onClick(View view) {
 //                not loged in yet
-                if(menuHelper.getMenu().getItem(1).isVisible()){
-                    Intent intent = new Intent(getContext().getApplicationContext(), login.class);
-                    startActivity(intent);
-                    Toast.makeText(getContext(), "Login First", Toast.LENGTH_SHORT).show();
-                    menuHelper.getMenu().getItem(1).setVisible(false);
-                    menuHelper.getMenu().getItem(5).setVisible(true);
-                }
+//                here
+//
+//
+//                if(menuHelper!= null && menuHelper.getMenu().getItem(1).isVisible()){
+//                    Intent intent = new Intent(getContext().getApplicationContext(), login.class);
+//                    startActivity(intent);
+//                    Toast.makeText(getContext(), "Login First", Toast.LENGTH_SHORT).show();
+//                    menuHelper.getMenu().getItem(1).setVisible(false);
+//                    menuHelper.getMenu().getItem(5).setVisible(true);
+//                }
                 //SharedPreferences sharedPreferences = container.getContext().getSharedPreferences("my_app_preferences", MODE_PRIVATE);
-                else {
                     Fragment fragment = new RentFormFragment();
                     fragment.setArguments(bundle);
                     FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
@@ -87,7 +109,7 @@ public class ViewFragment extends Fragment {
                     fragmentTransaction.replace(R.id.fragment_container, fragment);
                     fragmentTransaction.addToBackStack(null);
                     fragmentTransaction.commit();
-                }
+
             }
         });
         return rootView;

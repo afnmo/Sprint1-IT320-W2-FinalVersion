@@ -6,7 +6,8 @@ import android.view.Menu;
 
 import androidx.annotation.NonNull;
 
-public class MenuHelper implements Parcelable {
+
+public class MenuHelper implements Parcelable{
     private Menu menu;
 
     public MenuHelper() {
@@ -17,6 +18,7 @@ public class MenuHelper implements Parcelable {
     }
 
     protected MenuHelper(Parcel in) {
+
     }
 
     public static final Creator<MenuHelper> CREATOR = new Creator<MenuHelper>() {
@@ -46,5 +48,6 @@ public class MenuHelper implements Parcelable {
 
     @Override
     public void writeToParcel(@NonNull Parcel parcel, int i) {
+        parcel.writeValue(menu);
     }
 }
